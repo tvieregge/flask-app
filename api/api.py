@@ -24,10 +24,22 @@ def home():
 
 @app.route('/login', methods=['POST'])
 def do_admin_login():
-    if request.form['password'] == 'password' and request.form['username'] == 'admin':
+    username = request.form['username']
+    password = request.form['password']
+    query = "SELECT * FROM users WHERE username=? AND password=?;"
+    to_filter = [username, password]
+
+    conn = sqlite3.connect('books.db')
+    conn.row_factory = dict_factory
+    cur = conn.cursor()
+
+    results = cur.execute(query, to_filter).fetchall()
+    if results:
         session['logged_in'] = True
-    else:
-        flash('wrong password!')
+    # if request.form['password'] == 'password' and request.form['username'] == 'admin':
+    #     session['logged_in'] = True
+    # else:
+    #     flash('wrong password!')
     return home()
 
 
