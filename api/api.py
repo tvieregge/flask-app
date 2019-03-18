@@ -1,5 +1,5 @@
 import flask
-from flask import request, jsonify
+from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 import sqlite3
 
 app = flask.Flask(__name__)
@@ -14,7 +14,10 @@ def dict_factory(cursor, row):
 
 @app.route('/', methods=['GET'])
 def home():
-    return '''<h1>Distant Reading Archive</h1>
+    if not session.get('logged_in'):
+        return render_template('login.html')
+    else:
+        return '''<h1>Distant Reading Archive</h1>
 <p>A prototype API for distant reading of science fiction novels.</p>'''
 
 
