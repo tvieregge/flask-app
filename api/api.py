@@ -1,6 +1,7 @@
 import flask
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 import sqlite3
+import os
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -19,6 +20,21 @@ def home():
     else:
         return '''<h1>Distant Reading Archive</h1>
 <p>A prototype API for distant reading of science fiction novels.</p>'''
+
+
+@app.route('/login', methods=['POST'])
+def do_admin_login():
+    if request.form['password'] == 'password' and request.form['username'] == 'admin':
+        session['logged_in'] = True
+    else:
+        flash('wrong password!')
+    return home()
+
+
+@app.route("/logout")
+def logout():
+    session['logged_in'] = False
+    return home()
 
 
 @app.route('/api/v1/resources/books/all', methods=['GET'])
@@ -70,4 +86,5 @@ def api_filter():
 
     return jsonify(results)
 
+app.secret_key = os.urandom(12)
 app.run()
